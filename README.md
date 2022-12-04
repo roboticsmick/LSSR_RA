@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   <a href="https://michaelvenz.com/">
-    <img src="https://michaelvenz.com/wp-content/uploads/2022/02/cropped-LSR_LOGO_TYPE_PINK_GLOW-2.png" alt="Logo" width="80" height="80">
+    <img src="https://michaelvenz.com/wp-content/uploads/2022/02/cropped-LSR_LOGO_TYPE_PINK_GLOW-2.png" alt="Logo">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
@@ -83,7 +83,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://michaelvenz.com/)
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
@@ -149,7 +149,7 @@ _Below is an example of how you can instruct your audience on installing and set
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://michaelvenz.com/)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -202,9 +202,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Your Name - [@your_twitter](https://twitter.com/roboticsmick) - email@example.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/roboticsmick/LSR_RA](https://github.com/roboticsmick/LSR_RA)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -230,15 +230,15 @@ Use this space to list resources you find helpful and would like to give credit 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/roboticsmick/LSR_RA.svg?style=for-the-badge
 [contributors-url]: https://github.com/roboticsmick/LSR_RA/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/oroboticsmick/LSR_RA.svg?style=for-the-badge
 [forks-url]: https://github.com/roboticsmick/LSR_RA/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/roboticsmick/LSR_RA.svg?style=for-the-badge
 [stars-url]: https://github.com/roboticsmick/LSR_RA/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/roboticsmick/LSR_RA.svg?style=for-the-badge
 [issues-url]: https://github.com/roboticsmick/LSR_RA/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/roboticsmick/LSR_RA.svg?style=for-the-badge
 [license-url]: https://github.com/roboticsmick/LSR_RA/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/roboticsmick/
