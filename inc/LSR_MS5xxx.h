@@ -76,8 +76,6 @@ extern void FuncName(MS56xx_data_t *sensordata, int int_val, float float_val);
 /* Heading */
 /* ************************************************ */
 
-
-
 #ifdef __cplusplus
 }
 #endif
