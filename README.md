@@ -76,7 +76,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://michaelvenz.com/)
+GPS, accelerometer, barometric and gyoscope data is logged during the rockets flight. 
+
+This data is also transmitted back to a ground station and can be used to locate the rocket, and model it's flight path. 
+
+Barometric and accelerometer sensors can also be used to deploy the parachute ejection charges at the optimal time.
+
+![GPS_tracker](https://user-images.githubusercontent.com/70121687/205568776-9605248e-3c44-4a2d-9448-0044c5223a49.png)
+![GPS](https://user-images.githubusercontent.com/70121687/205567675-e1951953-1021-4b9b-8e1e-82c31342c12b.png)
+![plotGPS](https://user-images.githubusercontent.com/70121687/205567726-5fbc1030-31a9-4e93-8f6d-4dfd76b16a25.png)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
