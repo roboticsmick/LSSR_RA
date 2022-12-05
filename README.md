@@ -34,23 +34,18 @@
     <img src="https://michaelvenz.com/wp-content/uploads/2022/02/cropped-LSR_LOGO_TYPE_PINK_GLOW-2.png" alt="Logo">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">LSR Rocket Avionics</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    An open source rocket avionics system to track and monitor rocket flight using the RP2040 MCU.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/roboticsmick/LSR_RA">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/roboticsmick/LSR_RA/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/roboticsmick/LSR_RA/issues">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -78,37 +73,23 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
 [![Product Name Screen Shot][product-screenshot]](https://michaelvenz.com/)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-* [![CPP][cpp]][cpp-url]
+[![CPP][cpp]][cpp-url]
+[![pi]][pi-url]
+[![vsc]][vsc-url]
+[![plotly]][plotly-url]
+[![pythonanywhere]][pythonanywhere-url]
+[![patreon]][patreon-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -119,9 +100,11 @@ To get a local copy up and running follow these simple example steps.
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+
   ```sh
+
   npm install npm@latest -g
+
   ```
 
 ### Installation
@@ -129,20 +112,24 @@ This is an example of how to list things you need to use the software and how to
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
 1. Clone the repo
+
    ```sh
+
    git clone https://github.com/roboticsmick/LSR_RA.git
+
    ```
+
 2. Put the pico into bootloader mode
-
-4. Build the LSR Rocket Avionics code.
-
-3. Copy the UF2
+3. Build the LSR Rocket Avionics code.
+4. Copy the UF2
+  
    ```sh
+
    cp -a ./build/LSR_RA.uf2 /media/logic/RPI-RP2/
+
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -153,42 +140,29 @@ _For more examples, please refer to the [Documentation](https://michaelvenz.com/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+* [ ] Fix CMakefiles and folder structure so they are setup correctly.
+* [ ] Make sure setup correctly for C and C++
+* [ ] Add drivers for all sensors.
+  * [ ] Configure drivers to work with SPI and I2C
+  * [ ] Add clear instructions without jargon for all drivers
+  * [ ] Add pinout instructions for all drivers
+* [ ] Redo in Zephyr RTOS
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/roboticsmick/LSR_RA/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Please reach out if you have any suggestions or want to help make this system better. I'm a beginner and learning how to build this in my spare time so I'd love some help.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LICENSE -->
 ## License
@@ -197,32 +171,23 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/roboticsmick) - email@example.com
-
-Project Link: [https://github.com/roboticsmick/LSR_RA](https://github.com/roboticsmick/LSR_RA)
+* Michael Venz: [michaelvenz.com](https://michaelvenz.com/)
+* Github: [Github](https://github.com/roboticsmick/)
+* Twitter: [@roboticsmick](https://twitter.com/roboticsmick)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [Shawn Hymel - Intro to Raspberry Pi Pico and RP2040](https://www.youtube.com/playlist?list=PLEBQazB0HUyQO6rJxKr2umPCgmfAU-cqR)
+* [Othneil Drew - Best README Template](https://github.com/othneildrew/Best-README-Template)
+* [Ileriayo Adebiyi - Shield Icons ](https://github.com/progfay/shields-with-icon)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -243,5 +208,15 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/roboticsmick/
 [product-screenshot]: images/screenshot.png
-[cpp]: https://img.shields.io/badge/C++-Solutions-black.svg?style=flat-square&logo=C%2B%2B&logoColor=wh
+[cpp]: https://img.shields.io/badge/C/C++-black.svg?style=for-the-badge&logo=C%2B%2B&logoColor=wh
 [cpp-url]: https://michaelvenz.com/
+[pi]:https://img.shields.io/badge/-Raspberry%20Pi%20Pico-C51A4A?style=for-the-badge&logo=Raspberry-Pi
+[pi-url]: https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html
+[vsc]:https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white
+[vsc-url]: https://code.visualstudio.com/download
+[plotly]:https://img.shields.io/badge/Dash%20Plotly-%233F4F75.svg?style=for-the-badge&logo=plotly&logoColor=white
+[plotly-url]: https://dash.plotly.com/introduction
+[pythonanywhere]:https://img.shields.io/badge/pythonanywhere-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
+[pythonanywhere-url]: https://roboticsmick.pythonanywhere.com/
+[patreon]:https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white
+[patreon-url]: patreon.com/user?u=64698997
