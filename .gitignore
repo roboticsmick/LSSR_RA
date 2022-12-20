@@ -1,4 +1,5 @@
 build/
+vscode_build/
 .vscode/
 bin/
 obj/

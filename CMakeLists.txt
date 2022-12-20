@@ -4,7 +4,10 @@ cmake_minimum_required(VERSION 3.12)
 # Include build functions from Pico SDK
 # Key: PICO_SDK_PATH
 # Value: ~/pico/pico-sdk/external
-include($ENV{PICO_SDK_PATH}/pico_sdk_import.cmake)
+#include($ENV{PICO_SDK_PATH}/pico_sdk_import.cmake)
+#include(~/pico/pico-sdk/external/pico_sdk_import.cmake)
+# Copy the ~/pico/pico-sdk/external/pico_sdk_import.cmake file into main folder
+include(pico_sdk_import.cmake)
 
 # Set name of project (as PROJECT_NAME) and C/C++ standards
 project(main C CXX ASM)
@@ -18,7 +21,7 @@ pico_sdk_init()
 add_executable(${PROJECT_NAME} 
     src/main.cpp
     inc/LSR_ADXL3xx.c
-    inc/LSR_MS5xxx.c
+    inc/LSR_MS56xx.c
     inc/LSR_serial.c
 )
 
