@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     inc/LSR_ADXL3xx.c
     inc/LSR_MS56xx.c
+    inc/LSR_H3LIS200DLTR.c
     inc/LSR_serial.c
 )
 

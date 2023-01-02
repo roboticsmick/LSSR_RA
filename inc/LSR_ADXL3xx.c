@@ -4,7 +4,10 @@
  *  Created on: 01 December 2022
  *      Author: Michael Venz
  *      References:
- *      
+ *      https://www.analog.com/media/en/technical-documentation/data-sheets/adxl375.pdf 
+ * 
+ * ADXL3xx_data_t ADXL3xx_data = {0,0,0,0,0,0};
+ * ADXL3xxx_Init(i2c0_ptr);
  */
 
 #include <stdio.h>

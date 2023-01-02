@@ -38,17 +38,17 @@ static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_5 = 0xAA;
 static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_6 = 0xAC;
 static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_7 = 0xAE;
 
-static const uint8_t MS56xx__D1_OSR_256 = 0x40;
-static const uint8_t MS56xx__D1_OSR_512 = 0x42;
-static const uint8_t MS56xx__D1_OSR_1024 = 0x44;
-static const uint8_t MS56xx__D1_OSR_2048 = 0x46;
-static const uint8_t MS56xx__D1_OSR_4096 = 0x48;
+static const uint8_t MS56xx_D1_OSR_256 = 0x40;
+static const uint8_t MS56xx_D1_OSR_512 = 0x42;
+static const uint8_t MS56xx_D1_OSR_1024 = 0x44;
+static const uint8_t MS56xx_D1_OSR_2048 = 0x46;
+static const uint8_t MS56xx_D1_OSR_4096 = 0x48;
 
-static const uint8_t MS56xx__D2_OSR_256 = 0x50;
-static const uint8_t MS56xx__D2_OSR_512 = 0x52;
-static const uint8_t MS56xx__D2_OSR_1024 = 0x54;
-static const uint8_t MS56xx__D2_OSR_2048 = 0x56;
-static const uint8_t MS56xx__D2_OSR_4096 = 0x58;
+static const uint8_t MS56xx_D2_OSR_256 = 0x50;
+static const uint8_t MS56xx_D2_OSR_512 = 0x52;
+static const uint8_t MS56xx_D2_OSR_1024 = 0x54;
+static const uint8_t MS56xx_D2_OSR_2048 = 0x56;
+static const uint8_t MS56xx_D2_OSR_4096 = 0x58;
 
 static const int16_t MS56xx_CONVERSION_TIME_OSR_256 = 1000;
 static const int16_t MS56xx_CONVERSION_TIME_OSR_512 = 2000;
@@ -64,9 +64,11 @@ static const int16_t MS56xx_CONVERSION_TIME_OSR_4096 = 9000;
  * \ingroup MS56xx
  */
 typedef struct MS56xx_data {
-    float value;
-    uint8_t count;        
-    int16_t array[30];
+    uint8_t devAddr; // I2C device adress
+    uint16_t C1, C2, C3, C4, C5, C6; // Calibration data
+    uint32_t D1, D2; // Raw measurement data
+    float TEMP; // Calculated temperature
+    float PRES; // Calculated pressure
 } MS56xx_data_t;
 
 /* ************************************************ */

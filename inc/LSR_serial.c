@@ -79,7 +79,8 @@ bool spi_setup(spi_inst_t *spi,
                 const uint cs_pin,
                 const uint sck_pin,
                 const uint sdi_pin, 
-                const uint sdo_pin) {
+                const uint sdo_pin, 
+                const uint spi_freq) {
 
     // Initialize CS pin high
     gpio_init(cs_pin);
@@ -87,21 +88,22 @@ bool spi_setup(spi_inst_t *spi,
     gpio_put(cs_pin, 1);
 
     // Initialize SPI port at 1 MHz
-    spi_init(spi, 1000 * 1000);
+    spi_init(spi, spi_freq * 1000);
     
     // Set SPI format
     spi_set_format( spi,   // SPI instance
-                    8,      // Number of bits per transfer
-                    1,      // Polarity (CPOL)
-                    1,      // Phase (CPHA)
+                    SPI_BITS_PER_TRANSFER_8,      // Number of bits per transfer
+                    SPI_POLARITY_1,      // Polarity (CPOL)
+                    SPI_PHASE_1,      // Phase (CPHA)
                     SPI_MSB_FIRST);
 
     // Initialize SPI pins
     gpio_set_function(sck_pin, GPIO_FUNC_SPI);
     gpio_set_function(sdi_pin, GPIO_FUNC_SPI);
     gpio_set_function(sdo_pin, GPIO_FUNC_SPI);
-
+    
 }
+
 
 bool spi_cs_setup(const uint cs_pin) {
     // Initialize CS pin high
@@ -109,6 +111,7 @@ bool spi_cs_setup(const uint cs_pin) {
     gpio_set_dir(cs_pin, GPIO_OUT);
     gpio_put(cs_pin, 1);
 }
+
 
 void spi_reg_write(spi_inst_t *spi, 
                 const uint cs, 
@@ -125,6 +128,7 @@ void spi_reg_write(spi_inst_t *spi,
     spi_write_blocking(spi, msg, 2);
     gpio_put(cs, 1);
 }
+
 
 int spi_reg_read(spi_inst_t *spi,
                 const uint cs,
