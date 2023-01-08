@@ -26,6 +26,10 @@ extern "C" {
 
 // I2C address
 static const uint8_t ADXL343_ADDR = 0x53;
+static const uint8_t ADXL345_ADDR_HIGH = 0x53;
+static const uint8_t ADXL375_ADDR = 0x1D;
+static const uint8_t ADXL375_ADDR_HIGH = 0x53;
+
 
 // Registers
 static const uint8_t REG_DEVID = 0x00;

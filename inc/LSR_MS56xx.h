@@ -19,7 +19,8 @@ extern "C" {
 #endif
 
 // MS5611 I2C device address
-static const uint8_t MS56xx_ADDR = 0x77; //0b1110111
+static const uint8_t MS56xx_ADDR = 0x77;
+static const uint8_t MS56xx_ADDR_HIGH = 0x76; 
 
 // MS5611 device commands
 static const uint8_t MS56xx_RESET_COMMAND = 0x1E;

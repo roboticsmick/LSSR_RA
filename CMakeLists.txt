@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Include build functions from Pico SDK
+# Set Cmake: Configure Environment and Cmake: Configure Environment
 # Key: PICO_SDK_PATH
 # Value: ~/pico/pico-sdk/external
 #include($ENV{PICO_SDK_PATH}/pico_sdk_import.cmake)
