@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 
@@ -32,12 +33,29 @@ static const uint8_t MS5611_CONVERSION_TIME_OSR_1024 = 3;
 static const uint8_t MS5611_CONVERSION_TIME_OSR_2048 = 5;
 static const uint8_t MS5611_CONVERSION_TIME_OSR_4096 = 9;
 
-#define PROM_SENS       0
-#define PROM_OFF        1
-#define PROM_TCS        2
-#define PROM_TCO        3
-#define PROM_TREF       4
-#define PROM_TEMPSENS   5
+// MS5611 EEPROM address
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_0 = 0xA0;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_1 = 0xA2;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_2 = 0xA4;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_3 = 0xA6;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_4 = 0xA8;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_5 = 0xAA;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_6 = 0xAC;
+static const uint8_t MS5611_PROM_ADDRESS_READ_ADDRESS_7 = 0xAE;
+
+// Coefficients indexes for temperature and pressure computation
+static const uint8_t MS5611_PRESSURE_SENSITIVITY_INDEX = 1;
+static const uint8_t MS5611_PRESSURE_OFFSET_INDEX = 2;
+static const uint8_t MS5611_TEMP_COEFF_OF_PRESSURE_SENSITIVITY_INDEX = 3;
+static const uint8_t MS5611_TEMP_COEFF_OF_PRESSURE_OFFSET_INDEX = 4;
+static const uint8_t MS5611_REFERENCE_TEMPERATURE_INDEX = 5;
+static const uint8_t MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX = 6;
+static const uint8_t MS5611_CRC_INDEX = 7;
+static const uint8_t MS5611_COEFFICIENT_NUMBERS = 8;
+
+static uint16_t eeprom_coeff[MS5611_COEFFICIENT_NUMBERS];
+
+
 
 /*******************************************************************************
  * Function Declarations
@@ -111,7 +129,7 @@ int reg_read(  i2c_inst_t *i2c,
  * Main
  */
 int main() {
-
+    uint8_t i;
     int16_t acc_x;
     int16_t acc_y;
     int16_t acc_z;
@@ -121,8 +139,8 @@ int main() {
     float pressure_float;
     float baro_temp_float;
     uint32_t adc_temperature, adc_pressure;
-    int32_t dt, temp, press;
-    int64_t off, sens, p, t2, off2, sens2;
+    int32_t dT, temp, press;
+    int64_t OFF, SENS, P, T2, OFF2, SENS2;
 
     // Pins
     const uint sda_pin = 16;
@@ -171,15 +189,14 @@ int main() {
     // MS5611 reset command
     data[0] = 0x00;
     reg_write(i2c, MS56xx_ADDR, MS56xx_RESET_COMMAND, &data[0], 1);
-    printf("0x%X\r\n", data[0]);
 
-    // MS5611 reset command
-    data[0] = 0x00;
-    reg_write(i2c, MS56xx_ADDR, MS56xx_RESET_COMMAND, &data[0], 1);
-    printf("0x%X\r\n", data[0]);
-
-    // Wait before taking measurements
+    // Wait before reading PROM measurements
     sleep_ms(2000);
+    for( i=0 ; i< MS5611_COEFFICIENT_NUMBERS ; i++)
+	{
+        reg_read(i2c, MS56xx_ADDR, MS5611_PROM_ADDRESS_READ_ADDRESS_0 + i*2, data, 2);
+        eeprom_coeff[i] = (data[0] << 8) | data[1];
+	}
 
     // Loop forever
     while (true) {
@@ -202,40 +219,54 @@ int main() {
         // Print results
         // printf("X: %.2f | Y: %.2f | Z: %.2f\r\n", acc_x_f, acc_y_f, acc_z_f);
         
+        // for( i=1 ; i< MS5611_COEFFICIENT_NUMBERS-2; i++)
+        //     {
+        //         printf("%i. %d\r\n", i, eeprom_coeff[MS5611_PRESSURE_SENSITIVITY_INDEX]);
+        //     }
+
         // start conversion of the pressure sensor
         data[0] = 0x00;
         reg_write(i2c, MS56xx_ADDR, 0x42, &data[0], 1); // Pressure resolution RMS 0x42= 512 
         // Delay while conversion 
-        sleep_ms(10);
+        sleep_ms(2);
 		// read the pressure
 		reg_read(i2c, MS56xx_ADDR, 0x00, data, 3);
+        sleep_ms(2);
         // extract the raw value
-		adc_pressure  = data[0] << 16 | data[1] << 8 | data[2];
+		adc_pressure  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
+            
         sleep_ms(10);
         // start conversion of the pressure sensor
         data[0] = 0x00;
         reg_write(i2c, MS56xx_ADDR, 0x52, &data[0], 1); // Temperature resolution RMS 0x52= 512 
         // Delay while conversion 
-        sleep_ms(10);
+        sleep_ms(2);
         // read the temperature
 		reg_read(i2c, MS56xx_ADDR, 0x00, data, 3);
         // extract the raw value
-		adc_temperature  = data[0] << 16 | data[1] << 8 | data[2];
+        sleep_ms(2);
+		adc_temperature  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
 		// convert the pressure reading
+        printf("ADC Pressure: %ld | ADC Temperature: %ld\r\n", adc_pressure, adc_temperature);
 
-        dt = (int32_t) adc_temperature - PROM_TREF * (1<<8);
-        temp = (int32_t) 2000 + (int64_t) dt * PROM_TEMPSENS / (1<<23);
+        dT = (int32_t)adc_temperature - ((int32_t)eeprom_coeff[MS5611_REFERENCE_TEMPERATURE_INDEX] <<8 );
+        temp = 2000 + ((int64_t)dT * (int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX] >> 23) ;
 
-        t2 = ( 5 * ( (int64_t)dt  * (int64_t)dt ) ) >> 38;
-		off2 = 0 ;
-		sens2 = 0 ;
+		T2 = ( 5 * ( (int64_t)dT  * (int64_t)dT  ) ) >> 38;
+		OFF2 = 0;
+		SENS2 = 0;
 
-        off = (int64_t) PROM_OFF * (1<<16) + (int64_t) PROM_TCO * dt / (1<<7);
-        sens = (int64_t) PROM_SENS * (1<<15) + (int64_t) PROM_TCS * dt / (1<<8);
+        // OFF = OFF_T1 + TCO * dT
+        OFF = ( (int64_t)(eeprom_coeff[MS5611_PRESSURE_OFFSET_INDEX]) << 16 ) + ( ( (int64_t)(eeprom_coeff[MS5611_TEMP_COEFF_OF_PRESSURE_OFFSET_INDEX]) * dT ) >> 7 ) ;
+        OFF -= OFF2 ;
 
-        press = (uint32_t) ((adc_pressure * sens / (1<<21)) - off) / (1<<15);
+        // Sensitivity at actual temperature = SENS_T1 + TCS * dT
+        SENS = ( (int64_t)eeprom_coeff[MS5611_PRESSURE_SENSITIVITY_INDEX] << 15 ) + ( ((int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_PRESSURE_SENSITIVITY_INDEX] * dT) >> 8 ) ;
+        SENS -= SENS2 ;
 
-        baro_temp_float = ( (float)temp - t2 ) / 100;
+        press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15 ;
+
+        baro_temp_float = ( (float)temp - T2 ) / 100;
         pressure_float = (float)press / 100;
 
         // Print results
