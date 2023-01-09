@@ -138,8 +138,10 @@ int main() {
     float acc_z_f;
     float pressure_float;
     float baro_temp_float;
+    float alt_float;
+    double seaLevelPressure = 101325;
     uint32_t adc_temperature, adc_pressure;
-    int32_t dT, temp, press;
+    int32_t dT, temp, press, alt;
     int64_t OFF, SENS, P, T2, OFF2, SENS2;
 
     // Pins
@@ -252,9 +254,26 @@ int main() {
         dT = (int32_t)adc_temperature - ((int32_t)eeprom_coeff[MS5611_REFERENCE_TEMPERATURE_INDEX] <<8 );
         temp = 2000 + ((int64_t)dT * (int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX] >> 23) ;
 
-		T2 = ( 5 * ( (int64_t)dT  * (int64_t)dT  ) ) >> 38;
-		OFF2 = 0;
-		SENS2 = 0;
+        // Second order temperature compensation if temp below 20 degrees
+        if( temp < 2000 )
+        {
+            T2 = ( 3 * ( (int64_t)dT  * (int64_t)dT  ) ) >> 33;
+            OFF2 = 61 * ((int64_t)temp - 2000) * ((int64_t)temp - 2000) / 16 ;
+            SENS2 = 29 * ((int64_t)temp - 2000) * ((int64_t)temp - 2000) / 16 ;
+            
+            // Temperature compensation if temp below -15 degrees
+            if( temp < -1500 )
+            {
+                OFF2 += 17 * ((int64_t)temp + 1500) * ((int64_t)temp + 1500) ;
+                SENS2 += 9 * ((int64_t)temp + 1500) * ((int64_t)temp + 1500) ;
+            }
+        }
+        else
+        {
+            T2 = ( 5 * ( (int64_t)dT  * (int64_t)dT  ) ) >> 38;
+            OFF2 = 0 ;
+            SENS2 = 0 ;
+        }
 
         // OFF = OFF_T1 + TCO * dT
         OFF = ( (int64_t)(eeprom_coeff[MS5611_PRESSURE_OFFSET_INDEX]) << 16 ) + ( ( (int64_t)(eeprom_coeff[MS5611_TEMP_COEFF_OF_PRESSURE_OFFSET_INDEX]) * dT ) >> 7 ) ;
@@ -266,11 +285,14 @@ int main() {
 
         press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15 ;
 
+        alt = (44330.0f * (1.0f - pow((double)press / (double)seaLevelPressure, 0.1902949f)));
+
         baro_temp_float = ( (float)temp - T2 ) / 100;
         pressure_float = (float)press / 100;
+        alt_float = (float)alt;
 
         // Print results
-        printf("Pressure: %.2f | Temperature: %.2f\r\n", pressure_float, baro_temp_float);
+        printf("Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", pressure_float, baro_temp_float, alt_float);
 
         gpio_put(led_pin, true);
         sleep_ms(1000);
