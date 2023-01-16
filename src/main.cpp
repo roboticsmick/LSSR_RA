@@ -178,7 +178,7 @@ int main() {
     float baro_temp_float;
     float alt_float;
 
-    float SEA_LEVEL_PRESSURE = 1018.6; // Brisbane pressure at sea level (MSL) = 1018.6 hPa * 1000
+    const float SEA_LEVEL_PRESSURE = 1018.6; // Brisbane pressure at sea level (MSL) = 1018.6 hPa * 1000
     const int32_t TEMP_LAPSE_RATE = 6500; // temperature lapse rate (0.0065*10000)
     const int32_t GAS_CONSTANT = 831447; // Universal gas constant (8.31447*10000)
     const int32_t MOLAR_MASS_AIR = 2897; // molar mass of air (0.02897*10000)
@@ -342,7 +342,7 @@ int main() {
         // P = air pressure at altitude (hPa)
         // P0 = air pressure at sea level (hPa)
         // T = temperature at altitude (°C)
-        alt_float = (1 - pow((pressure_float/SEA_LEVEL_PRESSURE), (1/5.257))) * baro_temp_float/0.0065;
+        alt_float = ((((pow((SEA_LEVEL_PRESSURE/pressure_float), (1/5.257))) - 1) * (baro_temp_float + 273.15))/0.0065);
 
         // Print results
         printf("Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", pressure_float, baro_temp_float, alt_float);
