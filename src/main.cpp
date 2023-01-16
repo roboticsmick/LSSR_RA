@@ -55,6 +55,44 @@ static const uint8_t MS5611_COEFFICIENT_NUMBERS = 8;
 
 static uint16_t eeprom_coeff[MS5611_COEFFICIENT_NUMBERS];
 
+// Other constants
+/* write to one of these addresses to start pressure conversion */
+#define ADDR_CMD_CONVERT_D1_OSR256  0x40
+#define ADDR_CMD_CONVERT_D1_OSR512  0x42
+#define ADDR_CMD_CONVERT_D1_OSR1024 0x44
+#define ADDR_CMD_CONVERT_D1_OSR2048 0x46
+#define ADDR_CMD_CONVERT_D1_OSR4096 0x48
+
+/* write to one of these addresses to start temperature conversion */
+#define ADDR_CMD_CONVERT_D2_OSR256  0x50
+#define ADDR_CMD_CONVERT_D2_OSR512  0x52
+#define ADDR_CMD_CONVERT_D2_OSR1024 0x54
+#define ADDR_CMD_CONVERT_D2_OSR2048 0x56
+#define ADDR_CMD_CONVERT_D2_OSR4096 0x58
+
+/*
+  use an OSR of 1024 to reduce the self-heating effect of the
+  sensor. Information from MS tells us that some individual sensors
+  are quite sensitive to this effect and that reducing the OSR can
+  make a big difference
+ */
+static const uint8_t ADDR_CMD_CONVERT_PRESSURE = ADDR_CMD_CONVERT_D1_OSR1024;
+static const uint8_t ADDR_CMD_CONVERT_TEMPERATURE = ADDR_CMD_CONVERT_D2_OSR1024;
+
+#define ALTITUDE6_CONVERT_Pa_TO_mbar                  100
+#define ALTITUDE6_TEMP_CONVERT_C_TO_K                 273.15
+#define ALTITUDE6_ISA_MODEL_PARAM                       0.1902225603956629
+#define ALTITUDE6_CONVERT_NEG                           1
+#define ALTITUDE6_STANDARD_TEMPERATURE_LAPSE_RATE       0.0065
+#define ALTITUDE6_TEMPERATURE_COEFF                  2000
+#define ALTITUDE6_7_BIT_DATA                          128
+#define ALTITUDE6_8_BIT_DATA                          256
+#define ALTITUDE6_15_BIT_DATA                       32768
+#define ALTITUDE6_16_BIT_DATA                       65536
+#define ALTITUDE6_21_BIT_DATA                     2097152
+#define ALTITUDE6_23_BIT_DATA                     8388608
+#define ALTITUDE6_TEMPERATURE_CONV_TO_C               100
+#define ALTITUDE6_STANDARD_ATMOSPHERE_mbar           1013.25
 
 
 /*******************************************************************************
@@ -139,11 +177,24 @@ int main() {
     float pressure_float;
     float baro_temp_float;
     float alt_float;
-    double seaLevelPressure = 101325;
+
+    float SEA_LEVEL_PRESSURE = 1018.6; // Brisbane pressure at sea level (MSL) = 1018.6 hPa * 1000
+    const int32_t TEMP_LAPSE_RATE = 6500; // temperature lapse rate (0.0065*10000)
+    const int32_t GAS_CONSTANT = 831447; // Universal gas constant (8.31447*10000)
+    const int32_t MOLAR_MASS_AIR = 2897; // molar mass of air (0.02897*10000)
+    const int32_t GRAVITY = 980665; // acceleration due to gravity (9.80665*10000)
+    const int32_t SCALE_FACTOR = 10000;
+
     uint32_t adc_temperature, adc_pressure;
-    int32_t dT, temp, press, alt;
+    int32_t dT, temp, press, alt, temp_out;
     int64_t OFF, SENS, P, T2, OFF2, SENS2;
 
+    // float D1, D2; // Press, Temp
+    // float dT;
+    // float TEMP;
+    // float OFF;
+    // float SENS;
+    
     // Pins
     const uint sda_pin = 16;
     const uint scl_pin = 17;
@@ -228,7 +279,7 @@ int main() {
 
         // start conversion of the pressure sensor
         data[0] = 0x00;
-        reg_write(i2c, MS56xx_ADDR, 0x42, &data[0], 1); // Pressure resolution RMS 0x42= 512 
+        reg_write(i2c, MS56xx_ADDR, 0x44, &data[0], 1); // Pressure resolution RMS 0x44 = 1024 
         // Delay while conversion 
         sleep_ms(2);
 		// read the pressure
@@ -240,7 +291,7 @@ int main() {
         sleep_ms(10);
         // start conversion of the pressure sensor
         data[0] = 0x00;
-        reg_write(i2c, MS56xx_ADDR, 0x52, &data[0], 1); // Temperature resolution RMS 0x52= 512 
+        reg_write(i2c, MS56xx_ADDR, 0x54, &data[0], 1); // Temperature resolution RMS 0x54 = 1024 
         // Delay while conversion 
         sleep_ms(2);
         // read the temperature
@@ -249,7 +300,6 @@ int main() {
         sleep_ms(2);
 		adc_temperature  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
 		// convert the pressure reading
-        printf("ADC Pressure: %ld | ADC Temperature: %ld\r\n", adc_pressure, adc_temperature);
 
         dT = (int32_t)adc_temperature - ((int32_t)eeprom_coeff[MS5611_REFERENCE_TEMPERATURE_INDEX] <<8 );
         temp = 2000 + ((int64_t)dT * (int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX] >> 23) ;
@@ -284,17 +334,20 @@ int main() {
         SENS -= SENS2 ;
 
         press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15 ;
-
-        alt = (44330.0f * (1.0f - pow((double)press / (double)seaLevelPressure, 0.1902949f)));
-
-        baro_temp_float = ( (float)temp - T2 ) / 100;
+        baro_temp_float = ((float)temp - T2 ) / 100;
         pressure_float = (float)press / 100;
-        alt_float = (float)alt;
+
+        // h = (1 - (P/P0)^(1/5.257)) * T/0.0065
+        // h = altitude (m)
+        // P = air pressure at altitude (hPa)
+        // P0 = air pressure at sea level (hPa)
+        // T = temperature at altitude (°C)
+        alt_float = (1 - pow((pressure_float/SEA_LEVEL_PRESSURE), (1/5.257))) * baro_temp_float/0.0065;
 
         // Print results
         printf("Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", pressure_float, baro_temp_float, alt_float);
 
         gpio_put(led_pin, true);
-        sleep_ms(1000);
+        sleep_ms(200);
     }
 }
