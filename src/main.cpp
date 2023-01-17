@@ -176,14 +176,14 @@ int main() {
     float acc_z_f;
     float pressure_float;
     float baro_temp_float;
+    float altitude_float;
     float alt_float;
+    const float CONVERT_C_TO_K  = 273.15;
+    const float INV_GAMMA = 1.0/5.257;
+    const float TEMP_LAPSE_RATE = 0.0065;
+    const int32_t SCALE_FACTOR = 1000;
+    const float SEA_LEVEL_PRESSURE = 1014.6; // Brisbane pressure at sea level (MSL) = 1018.6 hPa * 1000
 
-    const float SEA_LEVEL_PRESSURE = 1018.6; // Brisbane pressure at sea level (MSL) = 1018.6 hPa * 1000
-    const int32_t TEMP_LAPSE_RATE = 6500; // temperature lapse rate (0.0065*10000)
-    const int32_t GAS_CONSTANT = 831447; // Universal gas constant (8.31447*10000)
-    const int32_t MOLAR_MASS_AIR = 2897; // molar mass of air (0.02897*10000)
-    const int32_t GRAVITY = 980665; // acceleration due to gravity (9.80665*10000)
-    const int32_t SCALE_FACTOR = 10000;
 
     uint32_t adc_temperature, adc_pressure;
     int32_t dT, temp, press, alt, temp_out;
@@ -336,13 +336,7 @@ int main() {
         press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15 ;
         baro_temp_float = ((float)temp - T2 ) / 100;
         pressure_float = (float)press / 100;
-
-        // h = (1 - (P/P0)^(1/5.257)) * T/0.0065
-        // h = altitude (m)
-        // P = air pressure at altitude (hPa)
-        // P0 = air pressure at sea level (hPa)
-        // T = temperature at altitude (°C)
-        alt_float = ((((pow((SEA_LEVEL_PRESSURE/pressure_float), (1/5.257))) - 1) * (baro_temp_float + 273.15))/0.0065);
+        alt_float = ((((pow((SEA_LEVEL_PRESSURE/pressure_float), INV_GAMMA)) - 1) * (baro_temp_float + CONVERT_C_TO_K))/TEMP_LAPSE_RATE);
 
         // Print results
         printf("Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", pressure_float, baro_temp_float, alt_float);
