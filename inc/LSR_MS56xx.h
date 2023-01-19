@@ -39,23 +39,38 @@ static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_5 = 0xAA;
 static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_6 = 0xAC;
 static const uint8_t MS56xx_PROM_ADDRESS_READ_ADDRESS_7 = 0xAE;
 
-static const uint8_t MS56xx_D1_OSR_256 = 0x40;
-static const uint8_t MS56xx_D1_OSR_512 = 0x42;
-static const uint8_t MS56xx_D1_OSR_1024 = 0x44;
-static const uint8_t MS56xx_D1_OSR_2048 = 0x46;
-static const uint8_t MS56xx_D1_OSR_4096 = 0x48;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D1_OSR256 = 0x40;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D1_OSR512 = 0x42;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D1_OSR1024 = 0x44;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D1_OSR2048 = 0x46;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D1_OSR4096 = 0x48;
 
-static const uint8_t MS56xx_D2_OSR_256 = 0x50;
-static const uint8_t MS56xx_D2_OSR_512 = 0x52;
-static const uint8_t MS56xx_D2_OSR_1024 = 0x54;
-static const uint8_t MS56xx_D2_OSR_2048 = 0x56;
-static const uint8_t MS56xx_D2_OSR_4096 = 0x58;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR256 = 0x50;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR512 = 0x52;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR1024 = 0x54;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR2048 = 0x56;
+static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR4096 = 0x58;
 
 static const int16_t MS56xx_CONVERSION_TIME_OSR_256 = 1000;
 static const int16_t MS56xx_CONVERSION_TIME_OSR_512 = 2000;
 static const int16_t MS56xx_CONVERSION_TIME_OSR_1024 = 3000;
 static const int16_t MS56xx_CONVERSION_TIME_OSR_2048 = 5000;
 static const int16_t MS56xx_CONVERSION_TIME_OSR_4096 = 9000;
+
+// Coefficients indexes for temperature and pressure computation
+static const uint8_t MS5611_PRESSURE_SENSITIVITY_INDEX = 1;
+static const uint8_t MS5611_PRESSURE_OFFSET_INDEX = 2;
+static const uint8_t MS5611_TEMP_COEFF_OF_PRESSURE_SENSITIVITY_INDEX = 3;
+static const uint8_t MS5611_TEMP_COEFF_OF_PRESSURE_OFFSET_INDEX = 4;
+static const uint8_t MS5611_REFERENCE_TEMPERATURE_INDEX = 5;
+static const uint8_t MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX = 6;
+static const uint8_t MS5611_CRC_INDEX = 7;
+static const uint8_t MS5611_COEFFICIENT_NUMBERS = 8;
+static uint16_t eeprom_coeff[8];
+
+static const float CONVERT_C_TO_K  = 273.15;
+static const float INV_GAMMA = 1.0/5.257;
+static const float TEMP_LAPSE_RATE = 0.0065;
 
 /* ************************************************ */
 /* Structures */
@@ -66,10 +81,11 @@ static const int16_t MS56xx_CONVERSION_TIME_OSR_4096 = 9000;
  */
 typedef struct MS56xx_data {
     uint8_t devAddr; // I2C device adress
-    uint16_t C1, C2, C3, C4, C5, C6; // Calibration data
-    uint32_t D1, D2; // Raw measurement data
-    float TEMP; // Calculated temperature
-    float PRES; // Calculated pressure
+    float sea_level_pressure;
+    float pressure_float; // Calculated temperature
+    float baro_temp_float; // Calculated pressure
+    float alt_float;
+    float alt_avg;
 } MS56xx_data_t;
 
 /* ************************************************ */
@@ -86,6 +102,19 @@ typedef struct MS56xx_data {
  * \return return comments
  */
 extern bool MS56xx_Init(i2c_inst_t *i2c);
+
+
+/*! \brief Breif explanation
+ *  \ingroup MS56xx Sensor
+ *
+ * Detailed explanation
+ *
+ * \param value1 value comment
+ * \param value2 value comment
+ * \return return comments
+ */
+extern bool MS56xx_Avg(i2c_inst_t *i2c, MS56xx_data_t *MS56xx_data);
+
 
 /*! \brief Breif explanation
  *  \ingroup MS56xx Sensor
