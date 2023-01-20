@@ -38,6 +38,8 @@ bool MS56xx_Init(i2c_inst_t *i2c) {
         eeprom_coeff[i] = (data[0] << 8) | data[1];
 	}
 
+    ADC_state = READ_PRESSURE;
+
     return true;
 }
 
@@ -61,22 +63,21 @@ bool MS56xx_Read(i2c_inst_t *i2c, MS56xx_data_t *MS56xx_data) {
     //     printf("%i.: %li\r\n",i,eeprom_coeff[i]);
 	// }
 
+    if(ADC_state == READ_PRESSURE) {
+
     // Buffer to store raw reads
     uint8_t data[6];
-
     // start conversion of the pressure sensor
     data[0] = 0x00;
     i2c_reg_write(i2c, MS56xx_ADDR, 0x44, &data[0], 1); // Pressure resolution RMS 0x44 = 1024 
-    // Delay while conversion 
-    sleep_ms(2);
     // read the pressure
     i2c_reg_read(i2c, MS56xx_ADDR, 0x00, data, 3);
-    sleep_ms(2);
+
     // extract the raw value
     adc_pressure  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
-        
+    
     sleep_ms(10);
-    // start conversion of the pressure sensor
+    // start conversion of the Temperature sensor
     data[0] = 0x00;
     i2c_reg_write(i2c, MS56xx_ADDR, 0x54, &data[0], 1); // Temperature resolution RMS 0x54 = 1024 
     // Delay while conversion 
@@ -121,7 +122,6 @@ bool MS56xx_Read(i2c_inst_t *i2c, MS56xx_data_t *MS56xx_data) {
     SENS -= SENS2 ;
 
     press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15;
-    printf("Pressure: %.2f\r\n", MS56xx_data->sea_level_pressure);
     MS56xx_data->baro_temp_float = ((float)temp - T2 ) / 100;
     MS56xx_data->pressure_float = (float)press / 100;
     MS56xx_data->alt_float = ((((pow((MS56xx_data->sea_level_pressure/MS56xx_data->pressure_float ), INV_GAMMA)) - 1) * (MS56xx_data->baro_temp_float + CONVERT_C_TO_K))/TEMP_LAPSE_RATE);

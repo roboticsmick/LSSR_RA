@@ -51,11 +51,11 @@ static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR1024 = 0x54;
 static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR2048 = 0x56;
 static const uint8_t MS56xx_ADDR_CMD_CONVERT_D2_OSR4096 = 0x58;
 
-static const int16_t MS56xx_CONVERSION_TIME_OSR_256 = 1000;
-static const int16_t MS56xx_CONVERSION_TIME_OSR_512 = 2000;
-static const int16_t MS56xx_CONVERSION_TIME_OSR_1024 = 3000;
-static const int16_t MS56xx_CONVERSION_TIME_OSR_2048 = 5000;
-static const int16_t MS56xx_CONVERSION_TIME_OSR_4096 = 9000;
+static const int16_t MS56xx_CONVERSION_TIME_OSR_256 = 1;
+static const int16_t MS56xx_CONVERSION_TIME_OSR_512 = 2;
+static const int16_t MS56xx_CONVERSION_TIME_OSR_1024 = 3;
+static const int16_t MS56xx_CONVERSION_TIME_OSR_2048 = 5;
+static const int16_t MS56xx_CONVERSION_TIME_OSR_4096 = 9;
 
 // Coefficients indexes for temperature and pressure computation
 static const uint8_t MS5611_PRESSURE_SENSITIVITY_INDEX = 1;
@@ -68,6 +68,7 @@ static const uint8_t MS5611_CRC_INDEX = 7;
 static const uint8_t MS5611_COEFFICIENT_NUMBERS = 8;
 
 static uint16_t eeprom_coeff[8];
+static enum {READ_PRESSURE, READ_TEMPERATURE} ADC_state;
 
 static const float CONVERT_C_TO_K  = 273.15;
 static const float INV_GAMMA = 1.0/5.257;
