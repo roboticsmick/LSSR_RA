@@ -56,6 +56,11 @@ bool MS56xx_Read(i2c_inst_t *i2c, MS56xx_data_t *MS56xx_data) {
     int32_t dT, temp, press, alt, temp_out;
     int64_t OFF, SENS, P, T2, OFF2, SENS2;
 
+    // for( i=0 ; i< MS5611_COEFFICIENT_NUMBERS ; i++)
+	// {
+    //     printf("%i.: %li\r\n",i,eeprom_coeff[i]);
+	// }
+
     // Buffer to store raw reads
     uint8_t data[6];
 
@@ -116,10 +121,11 @@ bool MS56xx_Read(i2c_inst_t *i2c, MS56xx_data_t *MS56xx_data) {
     SENS -= SENS2 ;
 
     press = ( ( (adc_pressure * SENS) >> 21 ) - OFF ) >> 15;
-
+    printf("Pressure: %.2f\r\n", MS56xx_data->sea_level_pressure);
     MS56xx_data->baro_temp_float = ((float)temp - T2 ) / 100;
     MS56xx_data->pressure_float = (float)press / 100;
     MS56xx_data->alt_float = ((((pow((MS56xx_data->sea_level_pressure/MS56xx_data->pressure_float ), INV_GAMMA)) - 1) * (MS56xx_data->baro_temp_float + CONVERT_C_TO_K))/TEMP_LAPSE_RATE);
+    printf("Function Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", MS56xx_data->pressure_float, MS56xx_data->baro_temp_float, MS56xx_data->alt_float);
 
     return true;
 }

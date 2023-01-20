@@ -66,6 +66,7 @@ static const uint8_t MS5611_REFERENCE_TEMPERATURE_INDEX = 5;
 static const uint8_t MS5611_TEMP_COEFF_OF_TEMPERATURE_INDEX = 6;
 static const uint8_t MS5611_CRC_INDEX = 7;
 static const uint8_t MS5611_COEFFICIENT_NUMBERS = 8;
+
 static uint16_t eeprom_coeff[8];
 
 static const float CONVERT_C_TO_K  = 273.15;

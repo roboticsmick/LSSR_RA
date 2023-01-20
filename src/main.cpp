@@ -96,7 +96,7 @@ int main() {
     float acc_x_f;
     float acc_y_f;
     float acc_z_f;
-    MS56xx_data_t *MS5611_data = {0};
+    MS56xx_data_t *MS5611_data;
     
     MS5611_data->sea_level_pressure = 1008.6;
 
@@ -187,11 +187,11 @@ int main() {
         //     }
 
         MS56xx_Read(i2c, MS5611_data);
-        
+        printf("Main Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", MS5611_data->pressure_float, MS5611_data->baro_temp_float, MS5611_data->alt_float);
+
         // Print results
-        printf("Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", MS5611_data->pressure_float, MS5611_data->baro_temp_float, MS5611_data->alt_float);
 
         gpio_put(led_pin, true);
-        sleep_ms(200);
+        sleep_ms(2000);
     }
 }
