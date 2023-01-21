@@ -85,6 +85,26 @@ static uint32_t conversion_time[5] = {	MS5611_CONVERSION_TIME_OSR_256,
 										MS5611_CONVERSION_TIME_OSR_2048,
 										MS5611_CONVERSION_TIME_OSR_4096};
 
+/* Default to OSR of 1024 to reduce the self-heating effect of the sensor.*/
+enum ms5611_resolution_osr {
+	ms5611_resolution_osr_256 = 0,
+	ms5611_resolution_osr_512,
+	ms5611_resolution_osr_1024,
+	ms5611_resolution_osr_2048,
+	ms5611_resolution_osr_4096
+};
+
+/* Error status */
+enum ms5611_status {
+	ms5611_status_ok = 0,
+	ms5611_status_no_i2c_acknowledge,
+	ms5611_status_i2c_transfer_error,
+	ms5611_status_crc_error
+};
+
+// /* Default value to ensure coefficients are read before converting temperature */
+// bool ms5611_coeff_read = false;
+
 /*! \brief 
  * \ingroup MS5611
  */
@@ -96,8 +116,10 @@ typedef struct ms5611_data {
     float alt_float;                        // Calculated altitude
     float alt_avg;                          // Averaged altitude readings
     enum {READ_PRESSURE, READ_TEMPERATURE} ADC_state;           // Read state
+    enum {COEFF_ERROR, COEFF_VALID} MS5611_coeff;               // Serial comms
     enum {MS5611_I2C_COMM, MS5611_SPI_COMM} MS5611_comm_type;   // Serial comms
 } ms5611_data_t;
+
 
 /* Functions */
 /*! \brief Breif explanation
@@ -110,6 +132,17 @@ typedef struct ms5611_data {
  * \return return comments
  */
 bool ms5611_init(ms5611_data_t *ms5611);
+
+
+/**
+ * \brief CRC check
+ *
+ * \param[in] uint16_t *: List of EEPROM coefficients
+ * \param[in] uint8_t : crc to compare with
+ *
+ * \return bool : TRUE if CRC is OK, FALSE if KO
+ */
+bool ms5611_crc_check(uint16_t *n_prom, uint8_t crc);
 
 
 /*! \brief Breif explanation

@@ -40,6 +40,13 @@ bool ms5611_init(ms5611_data_t *ms5611) {
     {
         printf("%i.: %li\r\n",i,eeprom_coeff[i]);
     }
+
+    if(!ms5611_crc_check( eeprom_coeff, eeprom_coeff[MS5611_CRC_INDEX] & 0x000F )){
+        ms5611->MS5611_coeff = COEFF_ERROR;
+    }
+    else {
+        ms5611->MS5611_coeff = COEFF_VALID;
+    }
     // Testing for pressure. 
     ms5611->sea_level_pressure++;
     // Set ADC state to read pressure first
@@ -147,4 +154,33 @@ bool MS5611_Read(void) {
   are quite sensitive to this effect and that reducing the OSR can
   make a big difference
  */
+
+
+bool ms5611_crc_check (uint16_t *n_prom, uint8_t crc)
+{
+    uint8_t cnt, n_bit; 
+    uint16_t n_rem; 
+    uint16_t crc_read;
+
+    n_rem = 0x00;
+    crc_read = n_prom[7]; 
+    n_prom[7] = (0xFF00 & (n_prom[7])); 
+    for (cnt = 0; cnt < 16; cnt++) 
+    {
+        if (cnt%2==1) n_rem ^= (unsigned short) ((n_prom[cnt>>1]) & 0x00FF);
+        else n_rem ^= (unsigned short) (n_prom[cnt>>1]>>8);
+        for (n_bit = 8; n_bit > 0; n_bit--)
+        {
+            if (n_rem & (0x8000))
+                n_rem = (n_rem << 1) ^ 0x3000;
+            else
+                n_rem = (n_rem << 1);
+        }
+    }
+    n_rem = (0x000F & (n_rem >> 12)); 
+    n_prom[7] = crc_read;
+    n_rem ^= 0x00;
+        
+	return  ( n_rem == crc );
+}
 

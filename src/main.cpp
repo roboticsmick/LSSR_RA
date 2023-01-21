@@ -8,12 +8,13 @@
 #include "../inc/LSR_MS5611.h"
 
 
-// Initialise MS5611 
-// bool MS5611_timer_func(struct repeating_timer *MS5611_timer) {
-//     // Read MS5611 ADC
-//     MS5611_Read();
-//     return true;
-// }
+bool MS5611_timer_func(struct repeating_timer *MS5611_timer) {
+    // Read MS5611 ADC
+    ms5611_data_t *ms5611 = (ms5611_data_t*)MS5611_timer->user_data;
+    // MS5611_Read();
+    ms5611->sea_level_pressure++;
+    return true;
+}
 
 /*******************************************************************************
  * Main
@@ -22,7 +23,6 @@ int main() {
 
     // Initialize MS5611 barometer sensor
     static ms5611_data_t ms5611;
-
     // Pins
     const uint sda_pin = 16;
     const uint scl_pin = 17;
@@ -51,10 +51,10 @@ int main() {
     ms5611_init(&ms5611);
 
     // Create interrupt timer for MS5611
-    //struct repeating_timer MS5611_timer;
+    struct repeating_timer MS5611_timer;
     
     // Create delay in ms with callback function, user data, and timer struct
-    //add_repeating_timer_ms(2000, MS5611_timer_func, NULL, &MS5611_timer);
+    add_repeating_timer_ms(2000, MS5611_timer_func, &ms5611, &MS5611_timer);
 
     // Loop forever
     while (true) {
@@ -64,6 +64,7 @@ int main() {
         //printf("Main: Sea level pressure: %.2f\r\n", MS5611_data.sea_level_pressure);
         //MS5611_Read(i2c, MS5611_data);
         //printf("Main Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", MS5611_data->pressure_float, MS5611_data->baro_temp_float, MS5611_data->alt_float);
+        printf("Sea Pressure: %.2f\r\n", ms5611.sea_level_pressure);
         gpio_put(led_pin, true);
         sleep_ms(4000);
     }
