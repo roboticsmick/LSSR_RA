@@ -19,38 +19,48 @@
 #include "LSR_MS5611.h"
 #include "LSR_serial.h"
 
-bool ms5611_init(ms5611_data_t *ms5611) {
+bool ms5611_i2c_init(ms5611_data_t *ms5611, i2c_inst_t *i2c, float *sea_level_pressure) {
     // Initialise variables
     uint8_t i;
     // Buffer to store EEPROM values
     uint8_t data[6];
+
+    // Set I2C
+    ms5611->i2c_address = i2c;
+
+    // Set sea level pressure 
+    ms5611->sea_level_pressure = *sea_level_pressure;
+
     // MS5611 reset command
     data[0] = 0x00;
     i2c_reg_write(ms5611->i2c_address, MS5611_ADDR, MS5611_RESET_COMMAND, &data[0], 1);
     // Wait before reading EEPROM measurements
     sleep_ms(2000);
     for( i=0 ; i< MS5611_COEFF_NUMBERS; i++)
-	{
+    {
         i2c_reg_read(ms5611->i2c_address, MS5611_ADDR, MS5611_PROM_ADDRESS_READ_0 + i*2, data, 2);
         eeprom_coeff[i] = (data[0] << 8) | data[1];
-	}
+    }
 
-    // Check EEPROM Values
+    if(!ms5611_crc_check( eeprom_coeff, eeprom_coeff[MS5611_CRC_INDEX] & 0x000F )){
+        ms5611->ms5611_coeff_check = COEFF_ERROR;
+    }
+    else {
+        ms5611->data_ready = COEFF_VALID;
+    }
+
+    // Print EEPROM Values
     for( i=0 ; i< MS5611_COEFF_NUMBERS ; i++)
     {
         printf("%i.: %li\r\n",i,eeprom_coeff[i]);
     }
 
-    if(!ms5611_crc_check( eeprom_coeff, eeprom_coeff[MS5611_CRC_INDEX] & 0x000F )){
-        ms5611->MS5611_coeff = COEFF_ERROR;
-    }
-    else {
-        ms5611->MS5611_coeff = COEFF_VALID;
-    }
-    // Testing for pressure. 
-    ms5611->sea_level_pressure++;
+    // Set read to pending.
+    ms5611->ms5611_coeff_check = MS5611_PENDING;
+
     // Set ADC state to read pressure first
     ms5611->ADC_state = READ_PRESSURE;
+
     return true;
 }
 

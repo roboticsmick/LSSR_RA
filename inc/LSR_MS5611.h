@@ -102,6 +102,7 @@ enum ms5611_status {
 	ms5611_status_crc_error
 };
 
+
 // /* Default value to ensure coefficients are read before converting temperature */
 // bool ms5611_coeff_read = false;
 
@@ -110,14 +111,15 @@ enum ms5611_status {
  */
 typedef struct ms5611_data {
     i2c_inst_t *i2c_address;
+    spi_inst_t *spi_address;
     float sea_level_pressure;               // Sea level pressure
     float pressure_float;                   // Calculated temperature
     float baro_temp_float;                  // Calculated pressure
     float alt_float;                        // Calculated altitude
     float alt_avg;                          // Averaged altitude readings
     enum {READ_PRESSURE, READ_TEMPERATURE} ADC_state;           // Read state
-    enum {COEFF_ERROR, COEFF_VALID} MS5611_coeff;               // Serial comms
-    enum {MS5611_I2C_COMM, MS5611_SPI_COMM} MS5611_comm_type;   // Serial comms
+    enum {MS5611_PENDING, MS5611_READY} data_ready;               // Serial comms
+    enum {COEFF_ERROR, COEFF_VALID} ms5611_coeff_check;               // Serial comms
 } ms5611_data_t;
 
 
@@ -131,7 +133,7 @@ typedef struct ms5611_data {
  * \param value2 value comment
  * \return return comments
  */
-bool ms5611_init(ms5611_data_t *ms5611);
+bool ms5611_i2c_init(ms5611_data_t *ms5611, i2c_inst_t *i2c, float *sea_level_pressure);
 
 
 /**
