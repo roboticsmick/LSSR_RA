@@ -44,51 +44,37 @@ bool ms5611_i2c_init(ms5611_data_t *ms5611, i2c_inst_t *i2c, float *sea_level_pr
 
     if(!ms5611_crc_check( eeprom_coeff, eeprom_coeff[MS5611_CRC_INDEX] & 0x000F )){
         ms5611->ms5611_coeff_check = COEFF_ERROR;
+        return false;
     }
     else {
-        ms5611->data_ready = COEFF_VALID;
+        ms5611->ms5611_coeff_check = COEFF_VALID;
+        ms5611->ms5611_sensor_read = READ_TEMPERATURE;
+        ms5611->ms5611_data_ready = MS5611_READY;
     }
 
     // Print EEPROM Values
-    for( i=0 ; i< MS5611_COEFF_NUMBERS ; i++)
-    {
-        printf("%i.: %li\r\n",i,eeprom_coeff[i]);
-    }
-
-    // Set read to pending.
-    ms5611->ms5611_coeff_check = MS5611_PENDING;
-
-    // Set ADC state to read pressure first
-    ms5611->ADC_state = READ_PRESSURE;
+    // for( i=0 ; i< MS5611_COEFF_NUMBERS ; i++)
+    // {
+    //     printf("%i.: %li\r\n",i,eeprom_coeff[i]);
+    // }
 
     return true;
 }
 
 
 
-bool MS5611_Avg(void) {
-
-    return true;
-}
 
 //bool MS5611_Read(i2c_inst_t *i2c, MS5611_data_t *MS5611_data) {
 
-bool MS5611_Read(void) {
+bool ms5611_adc_start(ms5611_data_t *ms5611) {
 
-    // uint8_t i;
-    // uint32_t adc_temperature, adc_pressure;
-    // int32_t dT, temp, press, alt, temp_out;
-    // int64_t OFF, SENS, P, T2, OFF2, SENS2;
+    // Buffer to store EEPROM values
+    uint8_t data[1];
 
-    // // for( i=0 ; i< MS5611_COEFFICIENT_NUMBERS ; i++)
-	// // {
-    // //     printf("%i.: %li\r\n",i,eeprom_coeff[i]);
-	// // }
-
-    // if(ADC_state == READ_PRESSURE) {
-
-    // }
-    // else if(ADC_state == READ_PRESSURE) {
+    if (ms5611->ms5611_sensor_read == READ_TEMPERATURE) {
+        data[0] = 0x00;
+        i2c_reg_write(ms5611->i2c_address, MS5611_ADDR, MS5611_RESET_COMMAND, &data[0], 1);
+    }
 
     // }
     // // Buffer to store raw reads

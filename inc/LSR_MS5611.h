@@ -11,6 +11,7 @@
 #define _MS5611_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <math.h>
 
@@ -103,6 +104,10 @@ enum ms5611_status {
 };
 
 
+// typedef enum ADC_state {READ_PRESSURE, READ_TEMPERATURE} ;           // Read state
+// typedef enum data_ready {MS5611_PENDING, MS5611_READY};               // Serial comms
+// typedef enum ms5611_coeff_check {COEFF_ERROR, COEFF_VALID};  
+
 // /* Default value to ensure coefficients are read before converting temperature */
 // bool ms5611_coeff_read = false;
 
@@ -117,9 +122,10 @@ typedef struct ms5611_data {
     float baro_temp_float;                  // Calculated pressure
     float alt_float;                        // Calculated altitude
     float alt_avg;                          // Averaged altitude readings
-    enum {READ_PRESSURE, READ_TEMPERATURE} ADC_state;           // Read state
-    enum {MS5611_PENDING, MS5611_READY} data_ready;               // Serial comms
-    enum {COEFF_ERROR, COEFF_VALID} ms5611_coeff_check;               // Serial comms
+	enum {COEFF_ERROR = 0, COEFF_VALID = 1} ms5611_coeff_check;
+	enum {READ_PRESSURE = 0, READ_TEMPERATURE = 1} ms5611_sensor_read;
+	enum {MS5611_PENDING = 0, MS5611_READY = 1} ms5611_data_ready;
+
 } ms5611_data_t;
 
 
@@ -168,7 +174,34 @@ bool MS5611_Avg(void);
  * \param MS5611_data value comment
  * \return return comments
  */
-bool MS5611_Read(void);
+bool ms5611_adc_start(ms5611_data_t *ms5611);
+
+/*! \brief Breif explanation
+ *  \ingroup MS5611 Sensor
+ *
+ * Detailed explanation
+ *
+ * \param i2c value comment
+ * \param MS5611_data value comment
+ * \return return comments
+ */
+bool ms5611_adc_read(ms5611_data_t *ms5611);
+
+/*! \brief Breif explanation
+ *  \ingroup MS5611 Sensor
+ *
+ * Detailed explanation
+ *
+ * \param i2c value comment
+ * \param MS5611_data value comment
+ * \return return comments
+ */
+bool ms5611_calc(ms5611_data_t *ms5611);
+
+
+
+
+
 
 #ifdef __cplusplus
 }

@@ -7,6 +7,13 @@
 #include "hardware/gpio.h"
 #include "../inc/LSR_MS5611.h"
 
+
+int64_t alarm_callback(alarm_id_t, void *user_data) {
+    ms5611_data_t *ms5611 = (ms5611_data_t *)user_data;
+    ms5611->ms5611_data_ready=MS5611_READY
+    return 0;
+}
+
 /*******************************************************************************
  * Main
  */
@@ -42,17 +49,20 @@ int main() {
     // Initialise MS5611 by resetting and storing EEPROM values
     ms5611_i2c_init(&ms5611, i2c, &sea_level_pressure);
 
+    add_alarm_in_ms(MS5611_CONVERSION_TIME_OSR_1024, alarm_callback, &ms5611, false);
+
     // Loop forever
     while (true) {
+        ms5611_adc_start(&ms5611); 
+        
         // 
-        sleep_ms(4000);
-        gpio_put(led_pin, false);
+        // sleep_ms(4000);
+        //gpio_put(led_pin, false);
         //printf("Main: Sea level pressure: %.2f\r\n", MS5611_data.sea_level_pressure);
-        // MS5611_Read(&ms5611); 
         //printf("Main Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", MS5611_data->pressure_float, MS5611_data->baro_temp_float, MS5611_data->alt_float);
-        printf("Sea Pressure: %.2f\r\n", ms5611.sea_level_pressure);
-        gpio_put(led_pin, true);
-        sleep_ms(4000);
+        //printf("Sea Pressure: %.2f\r\n", ms5611.sea_level_pressure);
+        //gpio_put(led_pin, true);
+        //sleep_ms(4000);
     }
 }
 
