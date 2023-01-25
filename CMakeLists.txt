@@ -20,7 +20,7 @@ pico_sdk_init()
 
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME} 
-    src/main.cpp
+    src/main.c
     inc/LSR_ADXL3xx.c
     inc/LSR_MS5611.c
     inc/LSR_H3LIS200DLTR.c
