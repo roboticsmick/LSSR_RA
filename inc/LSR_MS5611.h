@@ -117,6 +117,8 @@ enum ms5611_status {
 typedef struct ms5611_data {
     i2c_inst_t *i2c_address;
     spi_inst_t *spi_address;
+	uint32_t temp_adc;
+	uint32_t pressure_adc;
     float sea_level_pressure;               // Sea level pressure
     float pressure_float;                   // Calculated temperature
     float baro_temp_float;                  // Calculated pressure
@@ -124,13 +126,13 @@ typedef struct ms5611_data {
     float alt_avg;                          // Averaged altitude readings
 	enum {COEFF_ERROR = 0, COEFF_VALID = 1} ms5611_coeff_check;
 	enum {READ_PRESSURE = 0, READ_TEMPERATURE = 1} ms5611_sensor_read;
-	enum {MS5611_PENDING = 0, MS5611_READY = 1} ms5611_data_ready;
-
+	enum {MS5611_ADC_PENDING = 0, MS5611_ADC_READY = 1} ms5611_adc_ready;
+	enum {MS5611_PENDING = 0, MS5611_READY = 1} ms5611_sensor_ready;
 } ms5611_data_t;
 
 
 /* Functions */
-/*! \brief Breif explanation
+/*! \brief Brief explanation
  *  \ingroup MS5611 Sensor
  *
  * Detailed explanation
@@ -142,8 +144,7 @@ typedef struct ms5611_data {
 bool ms5611_i2c_init(ms5611_data_t *ms5611, i2c_inst_t *i2c, float *sea_level_pressure);
 
 
-/**
- * \brief CRC check
+/*! \brief CRC check
  *
  * \param[in] uint16_t *: List of EEPROM coefficients
  * \param[in] uint8_t : crc to compare with
@@ -153,7 +154,8 @@ bool ms5611_i2c_init(ms5611_data_t *ms5611, i2c_inst_t *i2c, float *sea_level_pr
 bool ms5611_crc_check(uint16_t *n_prom, uint8_t crc);
 
 
-/*! \brief Breif explanation
+/* Functions */
+/*! \brief Brief explanation
  *  \ingroup MS5611 Sensor
  *
  * Detailed explanation
@@ -162,45 +164,44 @@ bool ms5611_crc_check(uint16_t *n_prom, uint8_t crc);
  * \param value2 value comment
  * \return return comments
  */
-bool MS5611_Avg(void);
+bool ms5611_filter(ms5611_data_t *ms5611);
 
 
-/*! \brief Breif explanation
+/* Functions */
+/*! \brief Brief explanation
  *  \ingroup MS5611 Sensor
  *
  * Detailed explanation
  *
- * \param i2c value comment
- * \param MS5611_data value comment
+ * \param value1 value comment
+ * \param value2 value comment
  * \return return comments
  */
 bool ms5611_adc_start(ms5611_data_t *ms5611);
 
-/*! \brief Breif explanation
+/* Functions */
+/*! \brief Brief explanation
  *  \ingroup MS5611 Sensor
  *
  * Detailed explanation
  *
- * \param i2c value comment
- * \param MS5611_data value comment
+ * \param value1 value comment
+ * \param value2 value comment
  * \return return comments
  */
 bool ms5611_adc_read(ms5611_data_t *ms5611);
 
-/*! \brief Breif explanation
+/* Functions */
+/*! \brief Brief explanation
  *  \ingroup MS5611 Sensor
  *
  * Detailed explanation
  *
- * \param i2c value comment
- * \param MS5611_data value comment
+ * \param value1 value comment
+ * \param value2 value comment
  * \return return comments
  */
 bool ms5611_calc(ms5611_data_t *ms5611);
-
-
-
-
 
 
 #ifdef __cplusplus
