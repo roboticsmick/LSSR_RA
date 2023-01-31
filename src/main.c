@@ -48,12 +48,18 @@ int main() {
 
     // Loop forever
     while (true) {
+        printf("sen: %i\r\n", ms5611.ms5611_sensor_ready);
+        printf("adc: %i\r\n", ms5611.ms5611_adc_ready);
         if (ms5611.ms5611_sensor_ready == MS5611_READY) {
+            printf("2");
             ms5611_adc_start(&ms5611); 
         }
+        sleep_ms(1000);
         if (ms5611.ms5611_adc_ready == MS5611_ADC_READY) {
+            printf("3");
             ms5611_adc_read(&ms5611); 
         }
+        sleep_ms(1000);
         // // sleep_ms(4000);
         // //gpio_put(led_pin, false);
         // //printf("Main: Sea level pressure: %.2f\r\n", MS5611_data.sea_level_pressure);
