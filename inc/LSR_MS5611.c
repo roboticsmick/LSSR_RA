@@ -61,7 +61,6 @@ int64_t alarm_callback(int32_t alarm_id_t, void *user_data) {
     ms5611_data_t *ms5611 = (ms5611_data_t *)user_data;
     // ms5611->sea_level_pressure++;
     ms5611->ms5611_adc_ready = MS5611_ADC_READY;
-    printf("0");
     return 0;
 }
 
@@ -73,12 +72,10 @@ bool ms5611_adc_start(ms5611_data_t *ms5611) {
     if (ms5611->ms5611_sensor_read == READ_TEMPERATURE) {
         i2c_reg_write(ms5611->i2c_address, MS5611_ADDR, MS5611_ADDR_CMD_D1_OSR1024, &data[0], 1);
         ms5611->ms5611_sensor_ready = MS5611_PENDING;
-        printf("7");
     } 
     else {
         i2c_reg_write(ms5611->i2c_address, MS5611_ADDR, MS5611_ADDR_CMD_D2_OSR1024, &data[0], 1);
         ms5611->ms5611_sensor_ready = MS5611_PENDING;
-        printf("8");
     }
     add_alarm_in_ms(MS5611_CONVERSION_TIME_OSR_1024, alarm_callback, ms5611, false);
     return true;
@@ -87,28 +84,28 @@ bool ms5611_adc_start(ms5611_data_t *ms5611) {
 
 bool ms5611_adc_read(ms5611_data_t *ms5611) {
     
-    printf("4");
-    // Read ADC sensor
+    // Set ADC data buffer
     uint8_t data[3];
 	data[0] = 0;
 	data[1] = 0;
 	data[2] = 0;
-
+    // Read MS5611 ADC
     i2c_reg_read(ms5611->i2c_address, MS5611_ADDR, MS5611_READ_ADC, data, 3);
 
     if (ms5611->ms5611_sensor_read == READ_TEMPERATURE) {
+        // Store ADC temp value as uint32_t
         ms5611->temp_adc  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
         ms5611->ms5611_sensor_read = READ_PRESSURE;
-        printf("5");
     } 
     else {
+        // Store ADC pressure value as uint32_t
         ms5611->pressure_adc  = ((uint32_t)data[0] << 16) | ((uint32_t)data[1] << 8) | data[2];
         ms5611_calc(ms5611);
-        printf("6");
-        printf("Function Pressure: %.2f | Temperature: %.2f | Altitude :%.2f\r\n", ms5611->pressure_float, ms5611->baro_temp_float, ms5611->alt_float);
         ms5611->ms5611_sensor_read = READ_TEMPERATURE;
     }
+    // Set sensor state to ready
     ms5611->ms5611_sensor_ready = MS5611_READY;
+    // Set sensor ADC state to pending
     ms5611->ms5611_adc_ready = MS5611_ADC_PENDING;
     return true;
 }
@@ -118,7 +115,6 @@ bool ms5611_calc(ms5611_data_t *ms5611) {
 
 	int32_t dT, TEMP;
 	int64_t OFF, SENS, PRESS, T2, OFF2, SENS2;
-    printf("9");
     dT = (int32_t)ms5611->temp_adc - ((int32_t)eeprom_coeff[MS5611_REF_TEMP_INDEX] <<8 );
     TEMP = 2000 + ((int64_t)dT * (int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_TEMP_INDEX] >> 23) ;
 
