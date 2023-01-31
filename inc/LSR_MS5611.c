@@ -152,7 +152,8 @@ bool ms5611_calc(ms5611_data_t *ms5611) {
     // Left shift << 15 multiplies the value by 2^15 (32768 in decimal).
     SENS = ( (int64_t)eeprom_coeff[MS5611_PRESS_SENS_INDEX] << 15 ) + ( ((int64_t)eeprom_coeff[MS5611_TEMP_COEFF_OF_PRESS_SEN_INDEX] * dT) >> 8 ) ;
     SENS -= SENS2 ;
-
+    
+    // Right shift >> 21 divides the value by 2^21 (xxx in decimal)
     // Right shift >> 15 divides the value by 2^15 (32768 in decimal)
     PRESS = ( ( (ms5611->pressure_adc * SENS) >> 21 ) - OFF ) >> 15;
     ms5611->baro_temp_float = ((float)TEMP - T2 ) / 100;
