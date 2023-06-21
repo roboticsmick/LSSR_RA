@@ -8,42 +8,24 @@
 *** Thanks again! Now go create something AMAZING! :D
 -->
 
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
-  <a href="https://michaelvenz.com/">
-    <img src="https://michaelvenz.com/wp-content/uploads/2022/02/cropped-LSR_LOGO_TYPE_PINK_GLOW-2.png" alt="Logo">
-  </a>
+  <div align="center">
+    <a href="https://roboticsmick.pythonanywhere.com/">
+      <img src="https://roboticsmick.pythonanywhere.com/assets/LSSRlogo.png" alt="LSSR Logo" height="300">
+    </a>
+  <h3 align="center"></h3>
 
   <h3 align="center">LSR Rocket Avionics</h3>
 
   <p align="center">
     An open source rocket avionics system to track and monitor rocket flight using the RP2040 MCU.
     <br />
-    <a href="https://github.com/roboticsmick/LSR_RA">View Demo</a>
+    <a href="https://github.com/roboticsmick/LSSR_RA">View Demo</a>
     ·
-    <a href="https://github.com/roboticsmick/LSR_RA/issues">Report Bug</a>
+    <a href="https://github.com/roboticsmick/LSSR_RA/issues">Report Bug</a>
     ·
-    <a href="https://github.com/roboticsmick/LSR_RA/issues">Request Feature</a>
+    <a href="https://github.com/roboticsmick/LSSR_RA/issues">Request Feature</a>
   </p>
 </div>
 
